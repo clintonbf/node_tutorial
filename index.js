@@ -2,8 +2,6 @@
 const express       = require('express');
 const bodyParser    = require('body-parser');
 
-const { response, query } = require('express');
-
 //Import a custom module
 const dataSource = require('./modules/dataSource');
 
@@ -28,19 +26,28 @@ app.use(bodyParser());
 
 //POST example
 app.post(ENDPOINT_ROOT, (req, res) => {
-    const body = req.body;
+    const requestBody = req.body;
 
     res.send(200);
-    console.log(`The request name is ${body.name}`);
+    console.log(`The request name is ${requestBody.name}`);
 });
 
 //GET example
 app.get(ENDPOINT_ROOT, (req, res) => {
-    res.json(dataSource);
+    res.json(dataSource.getData());
 });
 
 //Extended GET example
+app.get(`${ENDPOINT_ROOT}/:index`, (req, res) => {
+    const data = getObj();
 
+    if (req.params.index > data.length - 1) {
+        res.status(404).end("Bad index provided");
+    }
+
+    const reqObj = data[req.params.index];
+    res.json(reqObj);
+});
 
 //Start the server
 app.listen(PORT, () => {
